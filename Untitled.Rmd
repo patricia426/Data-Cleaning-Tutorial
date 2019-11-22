@@ -1,0 +1,75 @@
+---
+title: "Proj-Ind"
+author: "Patricia Miller"
+date: "11/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = "/Users/patriciamiller/Documents/STAT426/Project-Ind")
+install.packages("reshape")
+library(MASS)
+library(reshape2)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+olympics <- read.csv('athlete_events.csv',header=TRUE)
+pop = read.csv('world_pop.csv')
+gdp = read.csv("world_gdp.csv",skip=3)
+head(olympics)
+```
+```{r}
+# rename column
+colnames(olympics)[8] <- "Country.Code"
+head(olympics)
+```
+```{r}
+head(gdp)
+```
+
+
+```{r}
+# drop a colum in gdp
+gdp <- gdp[-c(3,4)]
+head(gdp)
+```
+```{r}
+# melt
+mm <- melt(gdp, id=c("Country.Name","Country.Code"))
+tail(mm)
+```
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
