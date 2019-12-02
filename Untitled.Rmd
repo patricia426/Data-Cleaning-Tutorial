@@ -7,9 +7,12 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_knit$set(root.dir = "/Users/patriciamiller/Documents/STAT426/Project-Ind")
-install.packages("reshape")
+#install.packages("reshape")
 library(MASS)
 library(reshape2)
+#install.packages("dplyr")
+library(dplyr)
+library(ggplot2)
 ```
 
 ## R Markdown
@@ -24,6 +27,10 @@ pop = read.csv('world_pop.csv')
 gdp = read.csv("world_gdp.csv",skip=3)
 head(olympics)
 ```
+
+
+
+
 ```{r}
 # rename column
 colnames(olympics)[8] <- "Country.Code"
@@ -39,30 +46,80 @@ head(gdp)
 gdp <- gdp[-c(3,4)]
 head(gdp)
 ```
+
+
 ```{r}
 # melt
-mm <- melt(gdp, id=c("Country.Name","Country.Code"))
-tail(mm)
-```
-```{r}
-
+gdp2 <- melt(gdp, id=c("Country.Name","Country.Code"),variable="Year", value.name="GDP")
+head(gdp2)
 ```
 
 ```{r}
-
+# rename X from all the years
+gdp2$Year <- gsub('X', '', gdp2$Year)
+# make Year numeric
+gdp2$Year <- as.numeric(gdp2$Year)
+head(gdp2)
 ```
 
 ```{r}
-
+# merge gdp with olympic data
+mm <- merge(olympics,gdp2, on=c("Country.Code", "Year"))
+head(mm)
 ```
 
 ```{r}
-
+# filter to look at most recent olympics
+recent <- filter(mm,Year==2016)
+recent
 ```
 
 ```{r}
+# Fill in medals with a 0 or 1 for medal won
+recent$Medal <- gsub('Gold', 1, recent$Medal)
+recent$Medal <- gsub('Silver', 2, recent$Medal)
+recent$Medal <- gsub('Bronze', 3, recent$Medal)
+recent$Medal[is.na(recent$Medal)] <- 0
+recent
+```
+
+```{r}
+# Medal Count
+recent$MedalCount <- gsub(0, 0, recent$Medal)
+recent$MedalCount <- gsub(1, 1, recent$Medal)
+recent$MedalCount <- gsub(2, 1, recent$Medal)
+recent$MedalCount <- gsub(3, 1, recent$Medal)
+recent$MedalCount <- as.numeric(recent$MedalCount)
+```
+
+```{r}
+# group by country
+country <- recent %>% group_by(Country.Name)%>%
+  summarise(medals = sum(MedalCount),
+                                GDP = mean(GDP),
+                                avg_age = mean(Age))
+country
+#by_cyl %>% summarise(
+ # disp = mean(disp),
+#  hp = mean(hp))
+```
+```{r}
+# sort by number of medals)
+country <- arrange(country,desc(GDP))
+country2 <- arrange(country,desc(medals))
+#country <- subset(country, medals >= 20)
+country
+country2
+```
+
+
+```{r}
+# Most basic bubble plot
+ggplot(country, aes(x=avg_age, y=medals, size = GDP, color=medals)) +
+    geom_point(alpha=0.7)
 
 ```
+
 
 ## Including Plots
 
