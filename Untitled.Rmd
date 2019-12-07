@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_knit$set(root.dir = "/Users/patriciamiller/Documents/STAT426/Project-Ind")
+knitr::opts_knit$set(root.dir = "/Users/patriciamiller/Documents/STAT426/Data-Cleaning-Tutorial")
 #install.packages("reshape")
 library(MASS)
 library(reshape2)
@@ -51,16 +51,13 @@ head(gdp)
 ```{r}
 # melt
 gdp2 <- melt(gdp, id=c("Country.Name","Country.Code"),variable="Year", value.name="GDP")
-head(gdp2)
-```
-
-```{r}
 # rename X from all the years
 gdp2$Year <- gsub('X', '', gdp2$Year)
 # make Year numeric
 gdp2$Year <- as.numeric(gdp2$Year)
 head(gdp2)
 ```
+
 
 ```{r}
 # merge gdp with olympic data
@@ -71,7 +68,7 @@ head(mm)
 ```{r}
 # filter to look at most recent olympics
 recent <- filter(mm,Year==2016)
-recent
+head(recent)
 ```
 
 ```{r}
@@ -80,7 +77,7 @@ recent$Medal <- gsub('Gold', 1, recent$Medal)
 recent$Medal <- gsub('Silver', 2, recent$Medal)
 recent$Medal <- gsub('Bronze', 3, recent$Medal)
 recent$Medal[is.na(recent$Medal)] <- 0
-recent
+head(recent)
 ```
 
 ```{r}
