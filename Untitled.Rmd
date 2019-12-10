@@ -74,36 +74,26 @@ head(recent)
 ```{r}
 # Fill in medals with a 0 or 1 for medal won
 recent$Medal <- gsub('Gold', 1, recent$Medal)
-recent$Medal <- gsub('Silver', 2, recent$Medal)
-recent$Medal <- gsub('Bronze', 3, recent$Medal)
+recent$Medal <- gsub('Silver', 1, recent$Medal)
+recent$Medal <- gsub('Bronze', 1, recent$Medal)
 recent$Medal[is.na(recent$Medal)] <- 0
-head(recent)
-```
-
-```{r}
-# Medal Count
-recent$MedalCount <- gsub(0, 0, recent$Medal)
-recent$MedalCount <- gsub(1, 1, recent$Medal)
-recent$MedalCount <- gsub(2, 1, recent$Medal)
-recent$MedalCount <- gsub(3, 1, recent$Medal)
-recent$MedalCount <- as.numeric(recent$MedalCount)
+recent$Medal <- as.numeric(recent$Medal)
 ```
 
 ```{r}
 # group by country
 country <- recent %>% group_by(Country.Name)%>%
-  summarise(medals = sum(MedalCount),
+  summarise(medalcount = sum(Medal),
                                 GDP = mean(GDP),
                                 avg_age = mean(Age))
 country
-#by_cyl %>% summarise(
- # disp = mean(disp),
-#  hp = mean(hp))
 ```
+
+
 ```{r}
 # sort by number of medals)
 country <- arrange(country,desc(GDP))
-country2 <- arrange(country,desc(medals))
+country2 <- arrange(country,desc(medalcount))
 #country <- subset(country, medals >= 20)
 country
 country2
@@ -112,11 +102,16 @@ country2
 
 ```{r}
 # Most basic bubble plot
-ggplot(country, aes(x=avg_age, y=medals, size = GDP, color=medals)) +
+ggplot(country, aes(x=avg_age, y=medalcount, size = GDP, color=medalcount)) +
     geom_point(alpha=0.7)
 
 ```
 
+```{r}
+ggplot(country, aes(x=GDP, y=medalcount)) +
+    geom_point(aes(colour=factor(Country.Name)))
+    
+```
 
 ## Including Plots
 
